@@ -1,115 +1,156 @@
 # Tugas 1 Praktikum PPL - Task Manager API
 
-Sebuah RESTful API sederhana yang dibangun dengan Node.js dan Express untuk mengelola daftar tugas (to-do list). Proyek ini dilengkapi dengan unit testing menggunakan Jest dan Supertest, serta telah dikontainerisasi menggunakan Docker dan Docker Compose.
+## 1. Deskripsi Project
+Task Manager API adalah sebuah RESTful API sederhana yang dibangun menggunakan Node.js dan Express untuk fungsionalitas Manajemen Daftar Tugas (To-Do List). API ini memungkinkan pengguna untuk melakukan operasi CRUD (Create, Read, Update, Delete) terkait tugas harian. Penyimpanan data saat ini menggunakan mode In-Memory Array.
 
-![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
-![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)
+## 2. Dokumentasi API
 
-## Arsitektur Aplikasi
+Base URL: `http://localhost:3000`
 
-```mermaid
-graph TD
-    A[Client Request] -->|HTTP REST| B[Express Router]
-    B --> C{Endpoints Tasks}
-    C -->|GET /api/tasks| D[Retrieve All Tasks]
-    C -->|GET /api/tasks/:id| E[Retrieve Task by ID]
-    C -->|POST /api/tasks| F[Create New Task]
-    C -->|PUT /api/tasks/:id| G[Update Existing Task]
-    C -->|DELETE /api/tasks/:id| H[Remove Task]
-    D --> I[(In-Memory Array Data)]
-    E --> I
-    F --> I
-    G --> I
-    H --> I
-    
-    style I fill:#f9f,stroke:#333,stroke-width:2px
-```
-
-## Prasyarat
-
-- Node.js (v22 mereferensikan konfigurasi Dockerfile)
-- Docker
-- Docker Compose
-
-## Panduan Instalasi & Menjalankan Aplikasi
-
-### Pengembangan Lokal (Local Development)
-
-1. Kloning repositori:
-   ```bash
-   git clone https://github.com/ikanhiusukamakanikan/Tugas1PraktikumPPL.git
-   cd Tugas1PraktikumPPL
-   ```
-
-2. Instal dependensi dari `package.json`:
-   ```bash
-   npm install
-   ```
-
-3. Jalankan aplikasi:
-   - Mode standar: `npm start`
-   - Mode pengembangan (auto-reload): `npm run dev`
-
-Aplikasi akan berjalan di port `3000`.
-
-### Menggunakan Docker
-
-Bangun dan jalankan kontainer aplikasi dari direktori utama proyek:
-```bash
-docker-compose up --build
-```
-Aplikasi API lokal akan dapat diakses melalui `http://localhost:3000`.
-
-## Dokumentasi Endpoint API
-
-Base URL untuk lokal: `http://localhost:3000`
-
-### 1. Ambil Semua Daftar Tugas
-- **URL**: `/api/tasks`
-- **Metode**: `GET`
-- **Response Berhasil**: `200 OK` (Berisi array semua task)
-
-### 2. Ambil Spesifik Tugas Berdasarkan ID
-- **URL**: `/api/tasks/:id`
-- **Metode**: `GET`
-- **Response Berhasil**: `200 OK`
-- **Response Gagal**: `404 Not Found` (Apabila ID tidak ditemukan)
-
-### 3. Buat Tugas Baru
-- **URL**: `/api/tasks`
-- **Metode**: `POST`
-- **Body Requirement**: 
+### a. GET /api/tasks
+- **Fungsi**: Mendapatkan semua daftar tugas.
+- **Success Response (200 OK)**:
   ```json
   {
-    "title": "Nama Tugas Anda"
+    "status": "success",
+    "data": [
+      {
+        "id": 1,
+        "title": "Mengerjakan Tugas PPL",
+        "completed": false
+      }
+    ]
   }
   ```
-- **Response Berhasil**: `200 OK`
-- **Response Gagal**: `400 Bad Request` (Jika field "title" tidak disertakan)
 
-### 4. Perbarui Tugas yang Sudah Ada
-- **URL**: `/api/tasks/:id`
-- **Metode**: `PUT`
-- **Body** (Field Opsional):
+### b. GET /api/tasks/:id
+- **Fungsi**: Mendapatkan rincian sebuah tugas berdasarkan ID.
+- **Success Response (200 OK)**:
   ```json
   {
-    "title": "Nama Tugas Diperbarui",
+    "status": "success",
+    "data": {
+      "id": 1,
+      "title": "Mengerjakan Tugas PPL",
+      "completed": false
+    }
+  }
+  ```
+- **Error Response (404 Not Found)**:
+  ```json
+  {
+    "status": "error",
+    "message": "Task not found"
+  }
+  ```
+
+### c. POST /api/tasks
+- **Fungsi**: Menambahkan tugas baru.
+- **Request Body**:
+  ```json
+  {
+    "title": "Beberes Rumah"
+  }
+  ```
+- **Success Response (200 OK)**:
+  ```json
+  {
+    "status": "success",
+    "data": {
+      "id": 2,
+      "title": "Beberes Rumah",
+      "completed": false
+    }
+  }
+  ```
+- **Error Response (400 Bad Request)**:
+  ```json
+  {
+    "status": "error",
+    "message": "Title is required"
+  }
+  ```
+
+### d. PUT /api/tasks/:id
+- **Fungsi**: Memperbarui tugas berdasarkan ID.
+- **Request Body**:
+  ```json
+  {
+    "title": "Beberes Kamar",
     "completed": true
   }
   ```
-- **Response Berhasil**: `200 OK`
-- **Response Gagal**: `404 Not Found`
+- **Success Response (200 OK)**:
+  ```json
+  {
+    "status": "success",
+    "data": {
+      "id": 2,
+      "title": "Beberes Kamar",
+      "completed": true
+    }
+  }
+  ```
+- **Error Response (404 Not Found)**:
+  ```json
+  {
+    "status": "error",
+    "message": "Task not found"
+  }
+  ```
 
-### 5. Hapus Sebuah Tugas
-- **URL**: `/api/tasks/:id`
-- **Metode**: `DELETE`
-- **Response Berhasil**: `200 OK`
-- **Response Gagal**: `404 Not Found`
+### e. DELETE /api/tasks/:id
+- **Fungsi**: Menghapus tugas berdasarkan ID.
+- **Success Response (200 OK)**:
+  ```json
+  {
+    "status": "success",
+    "message": "Deleted"
+  }
+  ```
+- **Error Response (404 Not Found)**:
+  ```json
+  {
+    "status": "error",
+    "message": "Task not found"
+  }
+  ```
 
-## Pengujian (Testing)
+## 3. Panduan Instalasi (Docker)
 
-Proyek ini telah melalui pengujian API dengan framework Jest dan Supertest. Untuk menjalankan rangkaian uji unit:
-```bash
-npm test
-```
-Tes mencakup pengujian respons positif untuk keseluruhan skenario CRUD, serta validasi deteksi error (seperti kode `404 Not Found` dan kode `400 Bad Request`) memastikan stabilitas endpoint API.
+Aplikasi API ini telah dikontainerisasi menggunakan Docker. Anda dapat dengan mudah menjalankan *environment* pengembangan ini secara langsung tanpa instalasi Node.js pada lokal mesin.
+
+Langkah-langkah menjalankan aplikasi:
+1. Pastikan Anda berada pada direktori utama proyek tempat `docker-compose.yml` berada.
+2. Jalankan perintah berikut untuk *build image* sekaligus menjalankan kontainernya (tanpa emoji):
+   ```bash
+   docker-compose up --build
+   ```
+   *Atau jalankan `docker-compose up -d --build` untuk menjalankan container pada background mode (detached).*
+
+**Informasi Port Port yang Digunakan**:
+- **Container Port**: 3000 (Sesuai dengan `EXPOSE 3000` pada Dockerfile)
+- **Host Port**: 3000 (Aplikasi berjalan lokal di `localhost:3000` hasil mapping dari Docker Compose `3000:3000`)
+
+## 4. Alur Kerja Git
+
+Repositori ini menerapkan strategi percabangan (*branching strategy*) serta aturan *commit* terstandarisasi untuk mempermudah identifikasi *history* perubahan.
+- **Main Branch (`main`)**: Berisi kode sumber yang stabil (*production-ready*).
+- **Develop Branch (`develop`)**: Berisi kode sumber dengan tahap percobaan (*staging*) yang nantinya digabungkan (*merge*) ke main.
+- **Feature Branches (`feature/*`)**: Berisi pengerjaan fitur baru dengan prefix `feature/buat-api`.
+
+**Bukti Penggunaan Conventional Commits**:
+Setiap komit harus dimulai dengan parameter tipe seperti `feat`, `fix`, `docs`, `test`, `chore`.
+Berdasarkan log yang biasa dibangun pada projek ini, berikut simulasinya:
+- `feat: menambahkan endpoint post task`
+- `fix: memperbaiki error handle task not found`
+- `docs: dokumentasi instalasi pada readme`
+- `test: penambahan unit test crud operasional supersest`
+
+## 5. Status Automasi (GitHub Actions)
+
+![CI Status](https://github.com/ikanhiusukamakanikan/Tugas1PraktikumPPL/actions/workflows/node.js.yml/badge.svg)
+
+Proyek ini telah dikonfigurasi menggunakan layanan pipelinr CI/CD pada GitHub Actions:
+- **CI (Continuous Integration) untuk Tes**: Workflow berjalan saat ada proses Push maupun Pull Request guna mendeteksi kecacatan kode baru. Proses utama berupa instalasi dependensi, setup *Node.js version*, lalu diakhiri pemanggilan `npm test` menggunakan `Jest`.
+- **CS (*Code Scanning*/Analisis Statis)**: (Opsional jika diterapkan nanti) Memeriksa celah keamanan atau pengecekan kerentanan ketergantungan *libraries*.
