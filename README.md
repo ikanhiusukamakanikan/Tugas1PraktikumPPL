@@ -145,11 +145,8 @@ Berdasarkan log yang biasa dibangun pada projek ini, berikut simulasinya:
 - `feat: menambahkan endpoint post task`
 - `fix: memperbaiki error handle task not found`
 - `docs: dokumentasi instalasi pada readme`
-- `test: penambahan unit test crud operasional supersest`
 
 ## 5. Status Automasi (GitHub Actions)
-
-![CI Status](https://github.com/ikanhiusukamakanikan/Tugas1PraktikumPPL/actions/workflows/node.js.yml/badge.svg)
 
 Proyek ini telah dikonfigurasi menggunakan layanan pipelinr CI/CD pada GitHub Actions:
 - **CI (Continuous Integration) untuk Tes**: Workflow berjalan saat ada proses Push maupun Pull Request guna mendeteksi kecacatan kode baru. Proses utama berupa instalasi dependensi, setup *Node.js version*, lalu diakhiri pemanggilan `npm test` menggunakan `Jest`.
